@@ -3,8 +3,6 @@ from sense_hat_extended import SenseHatExtended
 import threading
 from time import sleep
 
-
-
 def main():
     pi = PiAssist() # Create new PiAssist object called "pi"
     sense_extended = SenseHatExtended() # Create new sense (modified extended version)

@@ -9,11 +9,10 @@ import json
 import requests
 import os
 
-
 class PiAssist:
     
     # Open Weather API info:
-    api_key = "eb7ce21c49e63ac97ec3472a815d0ed7"
+    api_key = "INSERT API KEY HERE"
     current_city_location = "San Jose" # San Jose by default
     base_url = "http://api.openweathermap.org/data/2.5/weather?"
     
@@ -162,7 +161,3 @@ class PiAssist:
         
     def shutdown(self):
         os.system("sudo shutdown")
-
-
-pi = PiAssist()
-pi.shutdown()

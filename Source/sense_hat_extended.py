@@ -26,7 +26,6 @@ class SenseHatExtended():
     as a property for the SenseHatExtendedFunctionality class.
     
     """
-
     default_animation_speed = .04 # used for the speed of animations.
     interval_animation_speed = .05
     numRows = 8
@@ -83,15 +82,13 @@ class SenseHatExtended():
             self.sense.set_pixel(i, 6, red)
             sleep(animation_speed)
             
-        
     def display_random(self, animate = True):
-        self.clear_matrix() # Clear grid before making any changes.
+        self.sense.clear() # Clear grid before making any changes.
         self.adjust_orientation() # Adjust orientation.
         
+        animation_speed = 0
         if animate:
             animation_speed = self.default_animation_speed
-        else:
-            animation_speed = 0
         
         for y in range(self.numRows):
             for x in range(self.numCols):
@@ -131,7 +128,6 @@ class SenseHatExtended():
         else:
             self.sense.set_rotation(180)
             
-        
     def play_life(self, animation_update_delay = 0):
         # Start() function
         self.reset_life() # Clear and adjust orientation before updating.
@@ -167,6 +163,3 @@ class SenseHatExtended():
         self.life.randomize_cell_states()
         self.update_matrix_colors_from_cell_states(self.interval_animation_speed)
         
-pi = SenseHatExtended()
-sleep(5)
-pi.play_life(.1)
