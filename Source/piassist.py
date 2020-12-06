@@ -5,6 +5,7 @@ from datetime import datetime
 import wikipedia
 import pyjokes
 import geocoder
+import wolframalpha 
 import json 
 import requests
 import os
@@ -12,17 +13,21 @@ import os
 class PiAssist:
     
     # Open Weather API info:
-    api_key = "INSERT API KEY HERE"
+    api_key = "API_KEY"
     current_city_location = "San Jose" # San Jose by default
     base_url = "http://api.openweathermap.org/data/2.5/weather?"
+    
+    # Wolfram Alphha API info:
+    wolf_api_id = "API_KEY"
+    client = None # Used for wolframalpha.Client(wolf_api_id) 
     
     def __init__(self):
         print("PiAssist Initialized!")
         self.r = sr.Recognizer()
         self.mic = sr.Microphone()
         self.language = "en"
-        
         self.current_city_location = self.get_current_city_location()
+        self.client = wolframalpha.Client(self.wolf_api_id) 
 
     def speak(self, text):
         text = str(text) # Incase non-string is passed through.
@@ -36,12 +41,11 @@ class PiAssist:
         said = ""
         
         with self.mic as source:
-            self.r.adjust_for_ambient_noise(source)
             print("Say something!")
+            self.r.adjust_for_ambient_noise(source)
             audio = self.r.listen(source)
         try:
             said = self.r.recognize_google(audio)
-
             print("You said: " + said)
             return said
         
@@ -64,14 +68,23 @@ class PiAssist:
             self.speak("The temperature is " + str(self.get_temp()) + " degrees.")
         elif "who made you" in text or "who created you" in text:
             self.speak("I was created by James Foti.")
-        elif "who is" in text or "what is" in text or "when is" in text:
+        elif "wikipedia" in text or "who is" in text:
             self.search_wikipedia(text)
+        elif "what is" in text or "what's" in text or "when is" in text:
+            try: self.search_wolfram(text)
+            except: self.search_wikipedia(text)
+        elif "calculate" in text:
+            self.calculate(text)
         elif "joke" in text:
             self.tell_joke()
         elif "hello" in text:
             self.speak("Hello")
         elif "how are you" in text:
             self.speak("I am good, how are you?")
+        elif "restart" in text:
+            self.restart()
+        elif "shutdown" in text:
+            self.shutdown()
         
     def get_current_time(self):
         # For more info: https://www.guru99.com/date-time-and-datetime-classes-in-python.html
@@ -90,6 +103,22 @@ class PiAssist:
         query = query.replace("wikipedia", "") 
         results = wikipedia.summary(query, sentences = 3) 
         self.speak("According to Wikipedia, " + str(results))
+        
+    def search_wolfram(self, query):
+        print("Getting Answer from Wolfram Alpha!")
+        indx = query.lower().split().index('google') 
+        query = query.split()[indx + 1:]
+        res = self.client.query(' '.join(query))
+        answer = next(res.results).text
+        self.speak(answer)
+
+    def calculate(self, question):
+        print("Calculating via Wolfram Alpha!")
+        indx = question.lower().split().index('calculate') 
+        query = question.split()[indx + 1:] 
+        res = self.client.query(' '.join(query)) 
+        answer = next(res.results).text
+        self.speak("The answer is " + answer)
     
     def tell_joke(self):
         print("Telling a Joke!")

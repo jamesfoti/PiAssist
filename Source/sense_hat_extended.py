@@ -131,10 +131,12 @@ class SenseHatExtended():
     def play_life(self, animation_update_delay = 0):
         # Start() function
         self.reset_life() # Clear and adjust orientation before updating.
-        isPlaying = True
+        self.isPlaying = True
         
         # Update() function
-        while isPlaying:
+        while True:
+            if self.isPlaying == False:
+                return
             if self.life.is_empty() or self.life.is_still():
                 sleep(animation_update_delay)
                 self.reset_life()
